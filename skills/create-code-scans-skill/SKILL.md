@@ -35,15 +35,16 @@ Rules that keep the generated skill honest over time, because a survey skill tha
 - Prefer a rule to an enumeration wherever membership changes over time: "every directory under `src/hosts`" beats a list of hosts, "whatever `git ls-files` does not list" beats a list of scratch files. Never write a machine-specific absolute path.
 - Every protected surface cites its source (a doc, a note, a contract file). Every "treat as intentional" entry also says what inside it is still fair game, so the protection does not become a blanket exemption.
 - Name the repo's own gates with their caveats instead of generic advice about dead-code tools.
+- In a repo too large to survey in one pass, say how a survey bounds itself: one domain from the survey list per pass, with the largest production files first. A skill that implies a whole-tree sweep of a monorepo teaches an agent to start something it cannot finish.
 - Leave no placeholders. If a section has nothing repo-specific to say, cut it rather than pad it.
 
-Then create `.claude/skills/code-scans-<project>` as a symlink to `../../.agents/skills/code-scans-<project>` so Claude Code loads the same skill.
+Then create `.claude/skills/code-scans-<project>` as a symlink to `../../.agents/skills/code-scans-<project>` so Claude Code loads the same skill, unless `.claude/skills` is already a symlink to `.agents/skills`, in which case the skill is reachable as-is and a second link would be redundant. If `.claude/` is gitignored, say so in the report rather than editing the ignore file.
 
 ## 3. Prove the generated skill before handing it over
 
 Run its own instructions once, bounded: pick one survey domain, and using only the generated skill's corpus classification and search recipes, prove or reject at least two candidates end to end. Produce the deliverable in the shape the skill prescribes, but keep it in a scratch location: a trial survey's findings are input for the user, not a commit, and the trial never implements removals.
 
-The trial exists to break the skill, not to find simplifications. Watch for a candidate the skill's rules call strong that turns out to be protected by something the skill did not list, a corpus rule that misclassifies a real consumer, a search recipe that finds nothing because the repo's naming differs, or a deliverable instruction that cannot be followed. Each one is a bug in the skill: fix the skill, not the candidate. Rerun the path checker after edits. A generated skill that was never executed is a draft, not a deliverable.
+The trial exists to break the skill, not to find simplifications. Run every shell command the skill ships at least once during it: a search recipe that has never executed can carry a flag typo, a shell quoting bug, or an import-specifier convention (`.js` specifiers against `.ts` sources, for instance) that makes it report every file dead. Watch for a candidate the skill's rules call strong that turns out to be protected by something the skill did not list, a corpus rule that misclassifies a real consumer, a search recipe that finds nothing because the repo's naming differs, or a deliverable instruction that cannot be followed. Each one is a bug in the skill: fix the skill, not the candidate. Rerun the path checker after edits. A generated skill that was never executed is a draft, not a deliverable.
 
 ## 4. Offer the maintenance loop
 

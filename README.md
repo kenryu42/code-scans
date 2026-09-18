@@ -34,22 +34,25 @@ Both skills bundle the same script. It extracts every backticked span from a Mar
 
 ## Benchmark
 
-Each skill was run on real repositories in disposable clones, once with the skill loaded and once without it, and graded by an independent agent against fixed assertions (registration, path accuracy, cited protected surfaces, corpus rules, a trial survey with proven candidates, edit scope). All runs used Claude Fable 5.1, one run per configuration per case.
+Both skills were run against four open-source AI agent repositories, once with the skill loaded and once without it, and graded by an independent agent against fixed assertions (registration, path accuracy, cited protected surfaces, corpus rules, a trial or live survey with proven candidates, edit scope). Create runs used each repo at its 2026-08-20 commit. Maintain runs then took the skill the create run produced and advanced the repo to its 2026-09-17 head, so the drift is four weeks of real upstream churn. All runs used Claude Fable 5.1, one run per configuration per case.
 
 | Configuration | Pass rate | Mean wall time | Mean tokens |
 |---|---|---|---|
-| With skill | 100% | 475s | 117,653 |
-| Without skill | 55% | 243s | 58,600 |
+| With skill | 100% | 865s | 186,458 |
+| Without skill | 58% | 570s | 134,020 |
 
-| Case | Target repo | With skill | Without skill | Time (with / without) | Tokens (with / without) |
-|---|---|---|---|---|---|
-| create-canon-lint | canon-lint (TypeScript, bun, knip + jscpd gate) | 11/11 | 6/11 | 510s / 180s | 131,063 / 55,445 |
-| create-mmx-cli | mmx-cli (CLI plus published SDK, no dead-code gate) | 11/11 | 5/11 | 358s / 172s | 95,781 / 60,712 |
-| create-scrapline | scrapline (Godot/GDScript, goldens and decisions log) | 11/11 | 5/11 | 517s / 252s | 134,578 / 60,688 |
-| maintain-ccsn | cc-safety-net, existing `ccsn-find-simplifications` | 7/7 | 4/7 | 465s / 308s | 107,757 / 78,037 |
-| maintain-dsh | deepseek-harness, existing `dsh-find-simplifications` | 7/7 | 5/7 | 527s / 301s | 122,639 / 82,141 |
+| Case | Target repo | Upstream commits in the drift window | With skill | Without skill | Time (with / without) | Tokens (with / without) |
+|---|---|---|---|---|---|---|
+| create | [anomalyco/opencode](https://github.com/anomalyco/opencode) | | 11/11 | 7/11 | 704s / 674s | 178,897 / 128,925 |
+| create | [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) | | 11/11 | 7/11 | 753s / 485s | 171,744 / 131,209 |
+| create | [earendil-works/pi](https://github.com/earendil-works/pi) | | 11/11 | 7/11 | 806s / 512s | 180,885 / 110,717 |
+| create | [openclaw/openclaw](https://github.com/openclaw/openclaw) | | 11/11 | 6/11 | 1,337s / 486s | 266,429 / 136,154 |
+| maintain | anomalyco/opencode | 270 | 8/8 | 5/8 | 604s / 474s | 133,449 / 122,722 |
+| maintain | deepseek-ai/deepseek-harness | 5,102 | 8/8 | 5/8 | 1,116s / 370s | 217,936 / 92,126 |
+| maintain | earendil-works/pi | 409 | 8/8 | 4/8 | 637s / 750s | 135,606 / 180,775 |
+| maintain | openclaw/openclaw | 15,028 | 8/8 | 3/8 | 964s / 807s | 206,720 / 169,528 |
 
-The skill costs roughly twice the wall time and 1.6x to 2.4x the tokens of an unaided run. The difference comes from the trial survey, which every with-skill run performed and no baseline did; in every create case it caught a bug in the freshly written skill before handover.
+The skill costs about 1.5x the wall time and 1.4x the tokens of an unaided run. Every with-skill run performed a trial or live survey and no baseline did; in every create case the trial caught a bug in the freshly written skill before handover, and in three of four maintain cases the baseline wrote at least one false claim into the skill while the with-skill run wrote none.
 
 ## Credits
 
