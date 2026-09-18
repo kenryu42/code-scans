@@ -36,25 +36,49 @@ Both skills bundle the same script. It extracts every backticked span from a Mar
 
 Both skills were run against four open-source AI agent repositories, once with the skill loaded and once without it, and graded by an independent agent against fixed assertions (registration, path accuracy, cited protected surfaces, corpus rules, a trial or live survey with proven candidates, edit scope). Create runs used each repo at its 2026-08-20 commit. Maintain runs then took the skill the create run produced and advanced the repo to its 2026-09-17 head, so the drift is four weeks of real upstream churn. One run per configuration per case.
 
-**Model:** Claude Fable 5.1 (`claude-fable-5-1`) at medium reasoning effort for every run: the skill runs, the baselines, their subagents, and the graders.
+### Claude Opus 5, medium reasoning effort
+
+`claude-opus-5` for the skill runs, the baselines, their subagents, and the graders.
+
+| Configuration | Pass rate | Mean wall time | Mean tokens |
+|---|---|---|---|
+| With skill | 100% | 898s | 192,180 |
+| Without skill | 48% | 574s | 129,838 |
+
+| Case | Target repo | Upstream commits in the drift window | With skill | Without skill | Time (with / without) | Tokens (with / without) |
+|---|---|---|---|---|---|---|
+| create | [anomalyco/opencode](https://github.com/anomalyco/opencode) | | 11/11 | 5/11 | 885s / 649s | 216,750 / 172,485 |
+| create | [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) | | 11/11 | 5/11 | 823s / 541s | 197,754 / 140,118 |
+| create | [earendil-works/pi](https://github.com/earendil-works/pi) | | 11/11 | 7/11 | 805s / 657s | 182,139 / 128,656 |
+| create | [openclaw/openclaw](https://github.com/openclaw/openclaw) | | 11/11 | 6/11 | 1,239s / 453s | 243,282 / 120,424 |
+| maintain | anomalyco/opencode | 270 | 8/8 | 4/8 | 492s / 521s | 103,465 / 100,424 |
+| maintain | deepseek-ai/deepseek-harness | 5,102 | 8/8 | 3/8 | 996s / 577s | 193,489 / 116,603 |
+| maintain | earendil-works/pi | 409 | 8/8 | 4/8 | 861s / 573s | 197,495 / 123,757 |
+| maintain | openclaw/openclaw | 15,028 | 8/8 | 3/8 | 1,085s / 622s | 203,065 / 136,240 |
+
+### Claude Fable 5.1, medium reasoning effort
+
+`claude-fable-5-1` for the skill runs, the baselines, their subagents, and the graders. This round ran against an earlier revision of the skills, before four fixes drawn from its own results, so the two rounds are not a controlled model comparison.
 
 | Configuration | Pass rate | Mean wall time | Mean tokens |
 |---|---|---|---|
 | With skill | 100% | 865s | 186,458 |
 | Without skill | 58% | 570s | 134,020 |
 
-| Case | Target repo | Upstream commits in the drift window | With skill | Without skill | Time (with / without) | Tokens (with / without) |
-|---|---|---|---|---|---|---|
-| create | [anomalyco/opencode](https://github.com/anomalyco/opencode) | | 11/11 | 7/11 | 704s / 674s | 178,897 / 128,925 |
-| create | [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) | | 11/11 | 7/11 | 753s / 485s | 171,744 / 131,209 |
-| create | [earendil-works/pi](https://github.com/earendil-works/pi) | | 11/11 | 7/11 | 806s / 512s | 180,885 / 110,717 |
-| create | [openclaw/openclaw](https://github.com/openclaw/openclaw) | | 11/11 | 6/11 | 1,337s / 486s | 266,429 / 136,154 |
-| maintain | anomalyco/opencode | 270 | 8/8 | 5/8 | 604s / 474s | 133,449 / 122,722 |
-| maintain | deepseek-ai/deepseek-harness | 5,102 | 8/8 | 5/8 | 1,116s / 370s | 217,936 / 92,126 |
-| maintain | earendil-works/pi | 409 | 8/8 | 4/8 | 637s / 750s | 135,606 / 180,775 |
-| maintain | openclaw/openclaw | 15,028 | 8/8 | 3/8 | 964s / 807s | 206,720 / 169,528 |
+| Case | Target repo | With skill | Without skill | Time (with / without) | Tokens (with / without) |
+|---|---|---|---|---|---|
+| create | anomalyco/opencode | 11/11 | 7/11 | 704s / 674s | 178,897 / 128,925 |
+| create | deepseek-ai/deepseek-harness | 11/11 | 7/11 | 753s / 485s | 171,744 / 131,209 |
+| create | earendil-works/pi | 11/11 | 7/11 | 806s / 512s | 180,885 / 110,717 |
+| create | openclaw/openclaw | 11/11 | 6/11 | 1,337s / 486s | 266,429 / 136,154 |
+| maintain | anomalyco/opencode | 8/8 | 5/8 | 604s / 474s | 133,449 / 122,722 |
+| maintain | deepseek-ai/deepseek-harness | 8/8 | 5/8 | 1,116s / 370s | 217,936 / 92,126 |
+| maintain | earendil-works/pi | 8/8 | 4/8 | 637s / 750s | 135,606 / 180,775 |
+| maintain | openclaw/openclaw | 8/8 | 3/8 | 964s / 807s | 206,720 / 169,528 |
 
-The skill costs about 1.5x the wall time and 1.4x the tokens of an unaided run. Every with-skill run performed a trial or live survey and no baseline did; in every create case the trial caught a bug in the freshly written skill before handover, and in three of four maintain cases the baseline wrote at least one false claim into the skill while the with-skill run wrote none.
+### What the skill buys
+
+On both models the skill costs roughly 1.5x the wall time and 1.4x the tokens of an unaided run, and passes every assertion on every repo. The difference is procedural. Every with-skill run performed a trial or live survey and no baseline did, and in every create case that trial falsified a rule in the freshly written skill before handover: a duplication criterion that would have flagged a deliberate migration twin, a dead-code rule that missed published plugin API, a search recipe blinded by `.js` specifiers against `.ts` sources. In the maintain cases the path audit and live pass caught instruction-level bugs that no amount of re-reading finds, including a git pathspec that hid the six largest files in a survey domain. Baselines wrote false claims into the skill in three of eight Opus cases and three of eight Fable cases; with-skill runs wrote none that graders could falsify.
 
 ## Credits
 
