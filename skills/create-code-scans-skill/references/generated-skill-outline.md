@@ -20,11 +20,15 @@ Surfaces that look unused or over-built but are settled decisions. Every entry c
 
 ## What Counts As A Strong Candidate
 
-Evidence-based criteria phrased for this repo's surfaces: no production consumer; tests or docs as the only consumers of something not load-bearing; two representations of one fact; seam methods no implementation needs; speculative generality with no owner; invariants or fallbacks protecting unused APIs; defensive machinery applied to values a trusted same-process caller owns; hand-rolled code where a package or builtin fits (only if the dependency policy allows). Then say what is too thin for a write-up.
+Evidence-based criteria phrased for this repo's surfaces: no production consumer; tests or docs as the only consumers of something not load-bearing; two representations of one fact; seam methods no implementation needs; speculative generality with no owner; invariants or fallbacks protecting unused APIs; defensive machinery applied to values a trusted same-process caller owns; hand-rolled code where a package or builtin fits (only if the dependency policy allows).
+
+Then set the materiality bar, because proving something is unused is the easy half and is not the same as it being worth reporting. Name what clears the bar in this repo's terms — a module or vendored tree that leaves the build, a fact duplicated where it can silently diverge, a hand-rolled routine with a dependency already in the manifest, a removal that retires a documented obligation — and name what does not: a single unused field, flag, parameter, type alias, or gated log line, which belongs in an inline TODO. Say plainly that three proven material candidates beat eight mixed ones, and that a survey stops when the material findings run out instead of filling the remaining slots with correct trivia.
+
+State the proportionality rule alongside it, because the materiality bar on its own pushes a survey toward big targets and a repo's big surfaces are usually the ones it protects on purpose. The larger the proposed removal, the heavier the protection burden: name the doctrine file, spec, or note that a module, package, or subsystem answers to, and require the candidate to quote the line that permits removing it — or to say no such line was found and drop to a question for the maintainer rather than a proposal. An uncited large removal ranks below a cited small one.
 
 ## Survey Broadly
 
-The survey domains, each mapped to real paths in the current tree, each phrased as what to look for there. Say how to split across subagents when breadth is requested, and to start with the largest production files rather than stray unused symbols.
+The survey domains, each mapped to real paths in the current tree, each phrased as what to look for there. Say how to split across subagents when breadth is requested, and to start with the largest production files rather than stray unused symbols. Say how to pick the domain when only one fits in a pass — expected payoff, not list order — and that a domain which turns out thin is reported as thin, with the next domain picked up on the following pass.
 
 ## Audit Trust And Lifecycle Boundaries (when the repo has them)
 
