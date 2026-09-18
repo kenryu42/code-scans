@@ -1,0 +1,62 @@
+{
+  "skill_name": "create-code-scans-skill",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Create a code-scans skill for this repo.",
+      "expected_output": "A registered .agents/skills/code-scans-canon-lint/SKILL.md (plus .claude/skills symlink) grounded in canon-lint's AGENTS.md, tree, and bun run check gate, with every named path existing, and evidence that a bounded trial survey ran.",
+      "files": [],
+      "expectations": [
+        "SKILL.md exists at .agents/skills/code-scans-<project>/ with frontmatter name equal to code-scans-<project> and a description that names the repo",
+        ".claude/skills/code-scans-<project> is a symlink that resolves to the .agents/skills directory",
+        "Every repo path named in backticks in the generated SKILL.md exists in git ls-files (check-skill-paths.sh reports zero MISSING)",
+        "The generated SKILL.md contains no machine-specific absolute path (/Users/, /private/tmp, /home/)",
+        "The generated skill does not set disable-model-invocation, so the survey can trigger on its own",
+        "The generated skill has a protected/intentional-by-default section whose entries each cite a repo source (doc, note, contract file, or manifest) rather than asserting intent without evidence",
+        "The generated skill names this repo's own check/lint/dead-code gate commands as found in AGENTS.md or package scripts, with at least one caveat about what the gate cannot see",
+        "The generated skill classifies production, non-production, and ambiguous corpora using concrete roots from this repo's tree",
+        "The generated skill states where findings go (notes/ADR system or report to maintainer) with a rationale derived from this repo, and whether a survey may implement removals",
+        "The run report shows a bounded trial survey: at least two candidates proven or rejected with concrete evidence (file paths and the searches run)",
+        "No product code, tests, or docs were modified: changes.diff touches only paths under .agents/ and .claude/"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "make a simplification survey skill for mmx-cli, like the ccsn-find-simplifications one in cc-safety-net \u2014 something an agent can use to find dead/duplicated/over-built code here without proposing to delete stuff that's intentional",
+      "expected_output": "A code-scans-mmx-cli skill whose intentional-by-default and corpus sections cite mmx-cli's own docs and tree, not copied cc-safety-net content.",
+      "files": [],
+      "expectations": [
+        "SKILL.md exists at .agents/skills/code-scans-<project>/ with frontmatter name equal to code-scans-<project> and a description that names the repo",
+        ".claude/skills/code-scans-<project> is a symlink that resolves to the .agents/skills directory",
+        "Every repo path named in backticks in the generated SKILL.md exists in git ls-files (check-skill-paths.sh reports zero MISSING)",
+        "The generated SKILL.md contains no machine-specific absolute path (/Users/, /private/tmp, /home/)",
+        "The generated skill does not set disable-model-invocation, so the survey can trigger on its own",
+        "The generated skill has a protected/intentional-by-default section whose entries each cite a repo source (doc, note, contract file, or manifest) rather than asserting intent without evidence",
+        "The generated skill names this repo's own check/lint/dead-code gate commands as found in AGENTS.md or package scripts, with at least one caveat about what the gate cannot see",
+        "The generated skill classifies production, non-production, and ambiguous corpora using concrete roots from this repo's tree",
+        "The generated skill states where findings go (notes/ADR system or report to maintainer) with a rationale derived from this repo, and whether a survey may implement removals",
+        "The run report shows a bounded trial survey: at least two candidates proven or rejected with concrete evidence (file paths and the searches run)",
+        "No product code, tests, or docs were modified: changes.diff touches only paths under .agents/ and .claude/"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We keep accumulating dead and duplicated code in scrapline. Set up a project-local skill that future agents can use to survey the repo for simplification candidates, grounded in our AGENTS.md conventions.",
+      "expected_output": "A code-scans-scrapline skill with survey domains mapped to scrapline's real source roots, a report-or-notes deliverable decided from the repo, and a trial survey that produced at least two proven-or-rejected candidates in scratch.",
+      "files": [],
+      "expectations": [
+        "SKILL.md exists at .agents/skills/code-scans-<project>/ with frontmatter name equal to code-scans-<project> and a description that names the repo",
+        ".claude/skills/code-scans-<project> is a symlink that resolves to the .agents/skills directory",
+        "Every repo path named in backticks in the generated SKILL.md exists in git ls-files (check-skill-paths.sh reports zero MISSING)",
+        "The generated SKILL.md contains no machine-specific absolute path (/Users/, /private/tmp, /home/)",
+        "The generated skill does not set disable-model-invocation, so the survey can trigger on its own",
+        "The generated skill has a protected/intentional-by-default section whose entries each cite a repo source (doc, note, contract file, or manifest) rather than asserting intent without evidence",
+        "The generated skill names this repo's own check/lint/dead-code gate commands as found in AGENTS.md or package scripts, with at least one caveat about what the gate cannot see",
+        "The generated skill classifies production, non-production, and ambiguous corpora using concrete roots from this repo's tree",
+        "The generated skill states where findings go (notes/ADR system or report to maintainer) with a rationale derived from this repo, and whether a survey may implement removals",
+        "The run report shows a bounded trial survey: at least two candidates proven or rejected with concrete evidence (file paths and the searches run)",
+        "No product code, tests, or docs were modified: changes.diff touches only paths under .agents/ and .claude/"
+      ]
+    }
+  ]
+}

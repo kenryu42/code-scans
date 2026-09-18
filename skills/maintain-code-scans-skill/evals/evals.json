@@ -1,0 +1,35 @@
+{
+  "skill_name": "maintain-code-scans-skill",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Audit the ccsn-find-simplifications skill in this repo \u2014 is it still accurate against the current tree and AGENTS.md? Fix what's stale.",
+      "expected_output": "Locates the older-named skill, runs the path audit (all paths exist as of 2026-09-16 realignment), doctrine diff, churn sweep, and a bounded live survey; reports clean or a small changed PR; never edits product code.",
+      "files": [],
+      "expectations": [
+        "The pass located .agents/skills/ccsn-find-simplifications/SKILL.md as the target despite the older naming and did not create a new skill",
+        "A path audit ran over every backticked repo path in the skill and its results are reported",
+        "The report states exactly one outcome word: clean, changed, or blocked, with justification",
+        "Edits, if any, are confined to .agents/skills/ccsn-find-simplifications/ (no changes to src/, tests/, docs/, AGENTS.md, REVIEW.md, SECURITY.md)",
+        "A bounded live survey of one named domain ran using the skill's own corpus rules, with at least two candidates proven or rejected with evidence",
+        "Simplification candidates found during the pass are reported to the user but not committed or implemented",
+        "If the outcome is changed, the resulting SKILL.md passes check-skill-paths.sh with zero MISSING and the commit message names what rotted and why"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Run the maintenance pass on the dsh-find-simplifications skill: check it still matches the repo and ship corrections if needed.",
+      "expected_output": "Detects that examples/ was retired (commit 4125514a08, 2026-08-24) and that packages are nested (packages/<group>/<pkg>/src, so packages/*/src matches nothing), fixes the corpus/domain claims in the skill only, and produces a changed outcome with a commit on a branch.",
+      "files": [],
+      "expectations": [
+        "The pass detects that the top-level examples/ tree no longer exists (retired 2026-08-24) and removes or corrects every claim in the skill that depends on it (production corpus, survey domains)",
+        "The pass detects that packages are nested (packages/<group>/<pkg>/src) so packages/*/src matches nothing, and corrects the production corpus rule to the real layout",
+        "The outcome is changed, with a commit on a local branch confined to .agents/skills/dsh-find-simplifications/",
+        "No edits outside the skill directory: no changes to packages/, docs/, AGENTS.md, or .agents/notes/",
+        "After the fix, check-skill-paths.sh reports no MISSING path except non-path spans such as the event prefix agent/*, and every remaining false positive is named in the report",
+        "A bounded live survey of one named domain ran with at least two candidates proven or rejected with evidence, and candidates are reported, not committed",
+        "The commit message or PR body names what rotted and why, in the repo's commit style"
+      ]
+    }
+  ]
+}
