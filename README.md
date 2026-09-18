@@ -32,18 +32,14 @@ The upkeep loop. It locates the project's code-scans skill, audits every named p
 
 Both skills bundle the same script. It extracts every backticked span from a Markdown file, keeps the ones that look like repo paths, and checks each against `git ls-files` (globs are matched as git pathspecs). Output is one line per path marked `ok`, `untracked`, or `MISSING`, with a non-zero exit when anything is missing. Running it on the deepseek-harness example during development found real drift: the top-level `examples/` tree had been retired three weeks earlier and the package glob no longer matched the nested workspace layout.
 
-## Experiments
+## Benchmark
 
-Each skill was run on real repositories in disposable git clones, once with the skill loaded and once without it as a baseline, and graded by an independent agent against fixed assertions. All runs used Claude Fable 5.1. Assertions were checked mechanically where possible (naming, symlink, path audit, absolute paths, frontmatter, edit scope) and by a grader reading the transcript, report, and generated files otherwise. Graders also re-ran spot-check searches in the clones to confirm candidate evidence and citations.
-
-### Iteration 1 summary
+Each skill was run on real repositories in disposable clones, once with the skill loaded and once without it, and graded by an independent agent against fixed assertions (registration, path accuracy, cited protected surfaces, corpus rules, a trial survey with proven candidates, edit scope). All runs used Claude Fable 5.1, one run per configuration per case.
 
 | Configuration | Pass rate | Mean wall time | Mean tokens |
 |---|---|---|---|
-| With skill | 100% (5 of 5 cases, every assertion) | 475s | 117,653 |
+| With skill | 100% | 475s | 117,653 |
 | Without skill | 55% | 243s | 58,600 |
-
-### Per-case results
 
 | Case | Target repo | With skill | Without skill | Time (with / without) | Tokens (with / without) |
 |---|---|---|---|---|---|
@@ -53,33 +49,7 @@ Each skill was run on real repositories in disposable git clones, once with the 
 | maintain-ccsn | cc-safety-net, existing `ccsn-find-simplifications` | 7/7 | 4/7 | 465s / 308s | 107,757 / 78,037 |
 | maintain-dsh | deepseek-harness, existing `dsh-find-simplifications` | 7/7 | 5/7 | 527s / 301s | 122,639 / 82,141 |
 
-### Assertions
-
-Create cases (11): skill registered at `code-scans-<project>` with a description naming the repo; symlink resolves; zero `MISSING` paths; no machine-specific absolute paths; no `disable-model-invocation`; protected surfaces each cite a repo source; the repo's own gates named with a caveat about what they cannot see; production, non-production, and ambiguous corpora with concrete roots; a deliverable channel with a repo-derived rationale; a trial survey with at least two candidates proven or rejected with evidence; no edits outside `.agents/` and `.claude/`.
-
-Maintain cases (7): correct target located; path audit run and reported; exactly one outcome word; edits confined to the skill directory; a live survey of one named domain with at least two candidates; candidates reported but not committed; final path check clean and the commit message names what rotted. The deepseek-harness case additionally required detecting the retired `examples/` tree and the nested package layout.
-
-### What the baselines missed
-
-- No baseline ran a trial or live survey. Every with-skill run did, and in all three create cases the trial exposed a bug in the freshly written skill that was then fixed: an unscoped search returning `node_modules` hits, a search recipe that read a file's own declarations as consumers, and a fold candidate that a design doc records as a deliberate rule split.
-- Every baseline mis-named the generated skill and every create baseline shipped backticked paths that do not exist. One baseline edited `AGENTS.md`, and one set `disable-model-invocation`, so its survey could never trigger on its own.
-- In the maintain cases both configurations found the seeded drift. The skill's extra finds came from its live pass and enumeration audit: in cc-safety-net, a shared-machinery pointer that omitted the real host registry and two uncited `SECURITY.md` contracts; in deepseek-harness, an Agent Note heading the format gate rejects, a translation-pairing requirement that would fail `doc-sync`, and a protected experimental package tree. One baseline replaced a removed tool name with a semantically weaker one.
-
-### Cost
-
-With-skill runs took roughly twice the wall time and 1.6x to 2.4x the tokens of their baselines. Graders judged the extra cost earned in every case, because the difference was the trial or live pass and that is where the discriminating findings came from.
-
-### Caveats
-
-- Sample size is one run per configuration per case, so the time and token figures are indicative, not statistical.
-- Some assertions do not discriminate: no-absolute-paths and edit-scope confinement passed for nearly every run, and the path-audit assertion passes for any grep loop.
-- Nothing checks mechanically whether a fact a run writes into a skill is true. Graders spot-checked citations in every case and found no false claim in any shipped skill file, but that remains a manual check.
-- Target clones had no installed dependencies, so runs could not execute the repos' check commands. Each run said so rather than claiming a green gate.
-
-### Changes made from iteration 1
-
-- The `<project>` naming rule was unstated; the canon-lint run chose `code-scans-canonlint` from the existing `verify-canonlint` skill. The generator now says to reuse the repo's established short name and otherwise the directory name.
-- The outline's rot-resistance rules are author guidance, and one generated skill copied them in as a trailing section. The outline now says so explicitly.
+The skill costs roughly twice the wall time and 1.6x to 2.4x the tokens of an unaided run. The difference comes from the trial survey, which every with-skill run performed and no baseline did; in every create case it caught a bug in the freshly written skill before handover.
 
 ## Credits
 
