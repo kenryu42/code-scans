@@ -36,7 +36,7 @@ Both skills bundle the same script. It extracts every backticked span from a Mar
 
 Both skills were run against four open-source AI agent repositories, once with the skill loaded and once without it, and graded by an independent agent against fixed assertions (registration, path accuracy, cited protected surfaces, corpus rules, a trial or live survey with proven candidates, edit scope). Create runs used each repo at its 2026-08-20 commit. Maintain runs then took the skill the create run produced and advanced the repo to its 2026-09-17 head, so the drift is four weeks of real upstream churn. One run per configuration per case.
 
-**Model:** Claude Fable 5.1 (`claude-fable-5-1`) for every run: the skill runs, the baselines, their subagents, and the graders.
+**Model:** Claude Fable 5.1 (`claude-fable-5-1`) at medium reasoning effort for every run: the skill runs, the baselines, their subagents, and the graders.
 
 | Configuration | Pass rate | Mean wall time | Mean tokens |
 |---|---|---|---|
